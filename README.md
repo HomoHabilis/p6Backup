@@ -1,6 +1,28 @@
-# p6_tool -- Roland P-6 Backup & Restore
+# p6_tool — Roland P-6 Backup & Restore
 
 A guided terminal utility for backing up and restoring the **Roland P-6** via its USB storage modes. No GUI, no desktop required. Works on macOS and Linux.
+
+---
+
+## At a glance
+
+```bash
+python p6_tool.py backup                              # prompts for folder + name
+python p6_tool.py restore --name <name> [--dir DIR]
+python p6_tool.py list [--dir DIR]
+python p6_tool.py diagnostic
+python p6_tool.py midi-status
+```
+
+**Default backup folder:**
+- macOS: `~/Music/P6`
+- Linux: `~/p6_backups`
+
+**Each backup contains:**
+- `patterns/` — Export patterns mode (Hold PLAY)
+- `BANK_A…BANK_H/` — per-bank export modes (Hold A … Hold SAMPLING+D)
+- `manifest.json` — step completion record
+- `<name>.7z` — compressed archive created alongside the folder
 
 ---
 
@@ -12,37 +34,26 @@ Restore is the reverse: two modes (sample import + pattern import), guided the s
 
 ---
 
-## Commands
+## Backup folder structure
+
+Example backup created at `~/Music/P6/P6_BACKUP_20260527_143000/`:
 
 ```
-python p6_tool.py backup                              # guided 9-step backup
-python p6_tool.py restore --name <name> [--dir DIR]  # guided 2-step restore
-python p6_tool.py list [--dir DIR]                   # list available backups
-python p6_tool.py diagnostic                         # dump mounted P-6 volume tree
-python p6_tool.py midi-status                        # show MIDI ports, query identity
+P6_BACKUP_20260527_143000/
+├── patterns/          (Hold PLAY on power-on)
+├── BANK_A/            (Hold A on power-on)
+├── BANK_B/            (Hold B on power-on)
+├── BANK_C/            (Hold C on power-on)
+├── BANK_D/            (Hold D on power-on)
+├── BANK_E/            (Hold SAMPLING + A on power-on)
+├── BANK_F/            (Hold SAMPLING + B on power-on)
+├── BANK_G/            (Hold SAMPLING + C on power-on)
+├── BANK_H/            (Hold SAMPLING + D on power-on)
+├── manifest.json      (completion record with file counts and timestamps)
+└── ../P6_BACKUP_20260527_143000.7z  (compressed archive)
 ```
 
-**Default backup folder:** `~/Music/P6` (macOS) - `~/p6_backups` (Linux)
-
----
-
-## Backup layout
-
-```
-~/Music/P6/
-  P6_BACKUP_20260527_143000/
-    patterns/          <- Hold PLAY on power-on
-    bank_A/            <- Hold A on power-on
-    bank_B/            <- Hold B on power-on
-    bank_C/            <- Hold C on power-on
-    bank_D/            <- Hold D on power-on
-    bank_E/            <- Hold SAMPLING + A on power-on
-    bank_F/            <- Hold SAMPLING + B on power-on
-    bank_G/            <- Hold SAMPLING + C on power-on
-    bank_H/            <- Hold SAMPLING + D on power-on
-    manifest.json      <- step completion record
-  P6_BACKUP_20260527_143000.7z   <- compressed archive
-```
+Each bank folder contains the P-6's exported samples. The `manifest.json` tracks which steps completed successfully. The `.7z` archive alongside the folder is optional but recommended for archival.
 
 ---
 
