@@ -371,11 +371,12 @@ def _restore_samples(mount_point: str, backup_path: str) -> int:
 
 
 def _restore_patterns(mount_point: str, backup_path: str) -> int:
-    """Write pattern files back to BACKUP/ on the mounted P-6."""
+    """Write pattern files back to RESTORE/ on the mounted P-6."""
     patterns_src = os.path.join(backup_path, "patterns")
     if not os.path.isdir(patterns_src):
         return 0
-    patterns_dst = os.path.join(mount_point, "BACKUP")
+    # Patterns must be imported from RESTORE on the device, not BACKUP
+    patterns_dst = os.path.join(mount_point, "RESTORE")
     os.makedirs(patterns_dst, exist_ok=True)
     count = 0
     for fname in os.listdir(patterns_src):
