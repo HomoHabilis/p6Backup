@@ -4,6 +4,42 @@ A guided terminal utility for backing up and restoring the **Roland P-6** via it
 
 ---
 
+## ⚠️ DISCLAIMER — PLEASE READ
+
+**This is a self-developed tool provided AS-IS with NO WARRANTY whatsoever.**
+
+**BY USING THIS TOOL, YOU ACCEPT FULL RESPONSIBILITY FOR ANY AND ALL OUTCOMES, INCLUDING BUT NOT LIMITED TO:**
+
+- **Complete data loss** — samples, patterns, settings, or other firmware data
+- **Device breaking or corruption** — rendering your P-6 inoperable or requiring factory reset
+- **Sample/pattern corruption or overwriting** — permanent loss of irreplaceable sounds
+- **USB communication failures** — incomplete transfers, corrupted files, or interrupted backups/restores
+- **Platform-specific issues** — unexpected behavior on your specific macOS version, Linux distribution, or WSL setup
+- **File system inconsistencies** — orphaned files, manifest corruption, or archive integrity issues
+
+**I assume NO LIABILITY for:**
+- Hardware damage to your P-6 or computer
+- Loss of irreplaceable creative work
+- Time or productivity loss
+- Any direct, indirect, incidental, or consequential damages arising from use of this tool
+
+**You are solely responsible for:**
+- Backing up your backups before using this tool
+- Testing on non-critical data first
+- Verifying all backups before deleting originals
+- Understanding the risks of USB mass-storage device communication
+- Compliance with Roland's terms of service for your P-6
+
+**Testing Status:** Currently tested on:
+- macOS Apple Silicon (Mac Mini m4) — P-6 firmware v1.02 (2× backup, 1× restore)
+- Linux support is in development; WSL support is untested for full functionality
+
+**Use at your own risk. Always test in a safe environment first.**
+
+---
+
+---
+
 ## At a glance
 
 ```bash
