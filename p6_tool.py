@@ -61,12 +61,12 @@ BACKUP_STEPS = [
 # src_dirs: subdirs of the backup to read from (BANK_* for samples, patterns for patterns)
 # dst_root: folder name to create on the P-6 mount
 RESTORE_STEPS = [
-    ("samples",  "Load samples",   "Hold [bold]SAMPLING[/bold] and power on",
-     ["BANK_A", "BANK_B", "BANK_C", "BANK_D", "BANK_E", "BANK_F", "BANK_G", "BANK_H"],
-     "IMPORT"),
-    ("patterns", "Load patterns",  "Hold [bold]REC[/bold] and power on",
-     ["patterns"],
-     "RESTORE"),
+    ("samples_AD", "Load samples (Banks A-D)", "Hold [bold]SAMPLING[/bold] and power on",
+     ["BANK_A", "BANK_B", "BANK_C", "BANK_D"], "IMPORT"),
+    ("samples_EH", "Load samples (Banks E-H)", "Hold [bold]SAMPLING[/bold] and power on",
+     ["BANK_E", "BANK_F", "BANK_G", "BANK_H"], "IMPORT"),
+    ("patterns",   "Load patterns",            "Hold [bold]REC[/bold] and power on",
+     ["patterns"], "RESTORE"),
 ]
 
 
@@ -198,7 +198,6 @@ def _dir_size_mb(path: str) -> float:
 
 
 # ── Location + compression helpers ──────────────────────────────────────────
-
 
 def _default_backup_dir() -> str:
     if platform.system() == "Darwin":
@@ -348,11 +347,11 @@ def _find_backup(name: str, backup_dir: str = "") -> Optional[str]:
     return sorted(matches)[-1]
 
 
-def _restore_samples(mount_point: str, backup_path: str) -> int:
-    """Write all bank backups into IMPORT/BANK_X/PAD_N/ on the mounted P-6."""
+def _restore_samples(mount_point: str, backup_path: str, banks: str = "ABCDEFGH") -> int:
+    """Write specified bank backups into IMPORT/BANK_X/PAD_N/ on the mounted P-6."""
     import_root = os.path.join(mount_point, "IMPORT")
     count = 0
-    for bank_letter in "ABCDEFGH":
+    for bank_letter in banks:
         bank_src = os.path.join(backup_path, f"BANK_{bank_letter}")
         if not os.path.isdir(bank_src):
             continue
@@ -397,8 +396,9 @@ def cmd_restore(name: str, backup_dir: str = "") -> None:
     console.print(f"Restoring from: [dim]{backup_path}[/dim]\n")
 
     steps = [
-        ("samples",  "Load samples",   "Hold [bold]SAMPLING[/bold] and power on", _restore_samples),
-        ("patterns", "Load patterns",  "Hold [bold]REC[/bold] and power on",      _restore_patterns),
+        ("samples_AD", "Load samples (Banks A-D)", "Hold [bold]SAMPLING[/bold] and power on", lambda m, b: _restore_samples(m, b, "ABCD")),
+        ("samples_EH", "Load samples (Banks E-H)", "Hold [bold]SAMPLING[/bold] and power on", lambda m, b: _restore_samples(m, b, "EFGH")),
+        ("patterns",   "Load patterns",            "Hold [bold]REC[/bold] and power on",      _restore_patterns),
     ]
 
     for idx, (step_key, label, instruction, restore_fn) in enumerate(steps, 1):
@@ -427,6 +427,11 @@ def cmd_restore(name: str, backup_dir: str = "") -> None:
 
             console.print(f"[green]✓[/green] Wrote {count} files")
             _eject(mount_point)
+
+            # Added the strictly necessary hardware operation requirement
+            console.print("\n[bold yellow]Action required on the P-6:[/bold yellow]")
+            console.print("  1. Press the [bold]KYBD[/bold] button to import the data into internal memory.")
+            console.print("  2. Wait for the step buttons to light up and the display to show [bold]donE[/bold].")
 
             if idx < len(steps):
                 console.print()
@@ -587,7 +592,7 @@ def main() -> None:
 
     sub.add_parser("backup", help="Guided 9-step full backup (prompts for folder + name)")
 
-    p_restore = sub.add_parser("restore", help="Guided 2-step restore")
+    p_restore = sub.add_parser("restore", help="Guided 3-step restore")
     p_restore.add_argument("--name", required=True, help="Backup name to restore from")
     p_restore.add_argument("--dir", default="", metavar="FOLDER",
                            help="Backup folder (default: ~/Music/P6 on macOS, ~/p6_backups on Linux)")
