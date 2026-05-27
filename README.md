@@ -124,9 +124,12 @@ The tool prompts for a folder and archive name, then walks through all 9 export 
 python p6_tool.py restore --name P6_BACKUP_20260527_143000
 ```
 
-Two steps:
-1. **Load samples** -- Hold SAMPLING and power on -> tool writes all bank folders to `IMPORT/`
-2. **Load patterns** -- Hold REC and power on -> tool writes pattern files to `BACKUP/`
+Three steps:
+1. **Load samples (Banks A–D)** — Hold SAMPLING and power on → tool writes Banks A–D to `IMPORT/`
+2. **Load samples (Banks E–H)** — Hold SAMPLING and power on → tool writes Banks E–H to `IMPORT/`
+3. **Load patterns** — Hold REC and power on → tool writes pattern files to `RESTORE/`
+
+After each sample step, press **KYBD** on the P-6 and wait for the display to show `donE` before powering off for the next step.
 
 Use `--dir /path/to/folder` if your backups are not in the default location.
 
