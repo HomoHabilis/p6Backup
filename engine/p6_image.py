@@ -20,6 +20,9 @@ DEFAULT_MOUNT_PATHS = [
     "/media/pi/P-6",
     "/media/pi/SP-404MKII",
     "/media/pi/SP404MKII",
+    "/Volumes/P-6",
+    "/Volumes/AIRAP6",
+    "/Volumes/ROLANDP6",
 ]
 
 

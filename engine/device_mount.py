@@ -97,13 +97,14 @@ def list_removable_mounts() -> list[RemovableMount]:
     except Exception as e:
         log.debug("lsblk failed: %s", e)
 
-    # Fallback: /media and /run/media subdirs
+    # Fallback: /media and /run/media subdirs, plus /Volumes on macOS
     fallback_roots = [
         "/media/pi",
         "/media/compa",
         "/run/media/pi",
         "/run/media/compa",
         "/mnt",
+        "/Volumes",
     ]
     # Also enumerate /media/* for any user
     try:
