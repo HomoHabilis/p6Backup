@@ -14,7 +14,7 @@ Usage:
 Default backup folder:  ~/Music/P6  (macOS)   ~/p6_backups  (Linux)
 Each backup contains:
     patterns/       — Export patterns mode (Hold PLAY)
-    bank_A…bank_H/  — per-bank export modes (Hold A … Hold SAMPLING+D)
+    BANK_A…BANK_H/  — per-bank export modes (Hold A … Hold SAMPLING+D)
     manifest.json   — step completion record
     <name>.7z       — compressed archive created alongside the folder
 """
@@ -47,26 +47,26 @@ POLL_INTERVAL_S = 1.0
 # ── Backup steps: (step_key, label, instruction) ─────────────────
 BACKUP_STEPS = [
     ("patterns", "Export patterns",    "Hold [bold]PLAY[/bold] and power on"),
-    ("bank_A",   "Export Bank A",      "Hold [bold]A[/bold] and power on"),
-    ("bank_B",   "Export Bank B",      "Hold [bold]B[/bold] and power on"),
-    ("bank_C",   "Export Bank C",      "Hold [bold]C[/bold] and power on"),
-    ("bank_D",   "Export Bank D",      "Hold [bold]D[/bold] and power on"),
-    ("bank_E",   "Export Bank E",      "Hold [bold]SAMPLING + A[/bold] and power on"),
-    ("bank_F",   "Export Bank F",      "Hold [bold]SAMPLING + B[/bold] and power on"),
-    ("bank_G",   "Export Bank G",      "Hold [bold]SAMPLING + C[/bold] and power on"),
-    ("bank_H",   "Export Bank H",      "Hold [bold]SAMPLING + D[/bold] and power on"),
+    ("BANK_A",   "Export Bank A",      "Hold [bold]A[/bold] and power on"),
+    ("BANK_B",   "Export Bank B",      "Hold [bold]B[/bold] and power on"),
+    ("BANK_C",   "Export Bank C",      "Hold [bold]C[/bold] and power on"),
+    ("BANK_D",   "Export Bank D",      "Hold [bold]D[/bold] and power on"),
+    ("BANK_E",   "Export Bank E",      "Hold [bold]SAMPLING + A[/bold] and power on"),
+    ("BANK_F",   "Export Bank F",      "Hold [bold]SAMPLING + B[/bold] and power on"),
+    ("BANK_G",   "Export Bank G",      "Hold [bold]SAMPLING + C[/bold] and power on"),
+    ("BANK_H",   "Export Bank H",      "Hold [bold]SAMPLING + D[/bold] and power on"),
 ]
 
 # ── Restore steps: (step_key, label, instruction, src_dirs, dst_root) ──
-# src_dirs: subdirs of the backup to read from (bank_* for samples, patterns for patterns)
+# src_dirs: subdirs of the backup to read from (BANK_* for samples, patterns for patterns)
 # dst_root: folder name to create on the P-6 mount
 RESTORE_STEPS = [
     ("samples",  "Load samples",   "Hold [bold]SAMPLING[/bold] and power on",
-     ["bank_A", "bank_B", "bank_C", "bank_D", "bank_E", "bank_F", "bank_G", "bank_H"],
+     ["BANK_A", "BANK_B", "BANK_C", "BANK_D", "BANK_E", "BANK_F", "BANK_G", "BANK_H"],
      "IMPORT"),
     ("patterns", "Load patterns",  "Hold [bold]REC[/bold] and power on",
      ["patterns"],
-     "BACKUP"),
+     "RESTORE"),
 ]
 
 
@@ -77,7 +77,7 @@ def _is_p6_volume(path: str, label: str) -> bool:
     if label.upper() in P6_LABELS:
         return True
     # Fallback: presence of known P-6 directories
-    for marker in ("EXPORT", "BACKUP", "IMPORT"):
+    for marker in ("EXPORT", "BACKUP", "IMPORT", "RESTORE"):
         if os.path.isdir(os.path.join(path, marker)):
             return True
     return False
@@ -278,7 +278,7 @@ def cmd_backup() -> None:
             if step_key == "patterns":
                 src_folder = os.path.join(mount_point, "BACKUP")
             else:
-                bank_letter = step_key[-1]  # "A" from "bank_A"
+                bank_letter = step_key[-1]  # "A" from "BANK_A"
                 src_folder = os.path.join(mount_point, "EXPORT", f"BANK_{bank_letter}")
 
             if not os.path.isdir(src_folder):
@@ -353,7 +353,7 @@ def _restore_samples(mount_point: str, backup_path: str) -> int:
     import_root = os.path.join(mount_point, "IMPORT")
     count = 0
     for bank_letter in "ABCDEFGH":
-        bank_src = os.path.join(backup_path, f"bank_{bank_letter}")
+        bank_src = os.path.join(backup_path, f"BANK_{bank_letter}")
         if not os.path.isdir(bank_src):
             continue
         bank_dst = os.path.join(import_root, f"BANK_{bank_letter}")
